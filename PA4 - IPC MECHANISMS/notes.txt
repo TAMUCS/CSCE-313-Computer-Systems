@@ -1,0 +1,23 @@
+TODO:
+    1) Implement Derived Compatibility in client/server
+    2) Implement MQ
+    3) Implement SHM
+
+for MQ class manual: $man mq_overview
+for SHM class manual: $man shm_overview
+for semaphores manual: $man sem_overview
+
+for cleanup:
+    Check $ll /run/shm 
+    Check $ll 
+
+for SHM:
+    - semaphores for sync
+
+for client:
+    - new arg i = {f, q ,s}; f is default
+
+server:
+    - modify main
+    - modify proccess_newchannel_request
+    - modify some function signatures

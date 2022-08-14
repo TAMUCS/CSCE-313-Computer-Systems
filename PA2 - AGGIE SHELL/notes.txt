@@ -1,0 +1,75 @@
+COMMAND PIPELINING: output of one command becomes input of next command
+    - Use vector of commands (parsed in order)
+    - Refer to L3A; unnamed pipes; pipe()/dup()/dup2()
+
+fds[2]: fds[0] == Read, fds[1] == Write 
+
+
+REDIRECTION:
+
+'>' OUTPUT REDIRECTION
+    - Redirect stdout(1) to file write(fds[1])
+    
+'<' INPUT REDIRECTION
+    - Open file for reading as a file descriptor
+    - Use dup2 to redirect stdin(0) from read(fds[0])
+
+NOTE: files for redirection are stored in class Command 
+NOTE: check for both '<' & '>' case
+
+BACKGROUND PROCCESSES:
+
+'&' Used as BG flag:
+    - immediately return user control while proccess is running in background 
+    - use Command::isBackground()
+    - Do NOT call waitpid()
+    - Store PID from fork() in vector of background proccesses that are currently running
+    - Before prompting user, iterate over bg vector to ensure no zombies (reap proccesses)
+    - make waitpid() non-blocking for bg proccesses
+    
+
+CD & PWD (CHANGE DIRECTORIES):
+    - use chdir() to execute cd commands
+    - for "cd -" keep track of PREVIOUS directory (HINT: getcwd() may be useful)
+    - use chdir() for non-supported commands; WHICH ONES???????????????
+
+
+TASKS:
+
+USER PROMPTS:
+    - prompt with username, current date-time, & absolute path in current directory
+        + getlogin() & getcwd() will be useful here
+
+EXECUTION:
+    - use fork() + exec(), then waitpid(last child) in !bg proccesses
+
+
+SINGLE/DOUBLE QUOTES:
+
+NOTE: "-e" allows for echo to take print instructions (like \t (TAB), \n (NEWLINE), etc.)
+
+IN: echo -e "cat\ta.txt" 
+OUT: cat    a.txt
+
+IN: echo "-e cat\ta.txt"
+OUT: -e cat\ta.txt
+
+IN: echo -e ‘<<<<< This message contains a |||line feed >>>>>\n’
+OUT: <<<<< This message contains a |||line feed >>>>>
+
+AUTO-GRADE SAFE PRINTER:
+        // // print out every command token-by-token on individual lines
+        /*
+        for (auto cmd : tknr.commands) {
+            for (auto str : cmd->args) {
+                cerr << "|" << str << "| ";
+            }
+            if (cmd->hasInput()) {
+                cerr << "in< " << cmd->in_file << " ";
+            }
+            if (cmd->hasOutput()) {
+                cerr << "out> " << cmd->out_file << " ";
+            }
+             cerr << endl;
+        }
+        */
